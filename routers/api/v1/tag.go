@@ -1,11 +1,13 @@
 package v1
 
 import (
+	"fmt"
+	"math"
 	"net/http"
 
-	"github.com/unknwon/com"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
+	"github.com/unknwon/com"
 
 	"github.com/guicai123/gin-v2/pkg/app"
 	"github.com/guicai123/gin-v2/pkg/e"
@@ -16,13 +18,7 @@ import (
 	"github.com/guicai123/gin-v2/service/tag_service"
 )
 
-// @Summary Get multiple article tags
-// @Produce  json
-// @Param name query string false "Name"
-// @Param state query int false "State"
-// @Success 200 {object} app.Response
-// @Failure 500 {object} app.Response
-// @Router /api/v1/tags [get]
+//获取标签数据
 func GetTags(c *gin.Context) {
 	appG := app.Gin{C: c}
 	name := c.Query("name")
@@ -37,21 +33,22 @@ func GetTags(c *gin.Context) {
 		PageNum:  util.GetPage(c),
 		PageSize: setting.AppSetting.PageSize,
 	}
+	fmt.Println(tagService)
 	tags, err := tagService.GetAll()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_GET_TAGS_FAIL, nil)
 		return
 	}
-
 	count, err := tagService.Count()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_COUNT_TAG_FAIL, nil)
 		return
 	}
-
+	var TotalPage = math.Ceil(float64(count) / float64(setting.AppSetting.PageSize))
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]interface{}{
 		"lists": tags,
 		"total": count,
+		"totalPage":TotalPage,
 	})
 }
 
@@ -61,26 +58,17 @@ type AddTagForm struct {
 	State     int    `form:"state" valid:"Range(0,1)"`
 }
 
-// @Summary Add article tag
-// @Produce  json
-// @Param name body string true "Name"
-// @Param state body int false "State"
-// @Param created_by body int false "CreatedBy"
-// @Success 200 {object} app.Response
-// @Failure 500 {object} app.Response
-// @Router /api/v1/tags [post]
+//添加标签
 func AddTag(c *gin.Context) {
 	var (
 		appG = app.Gin{C: c}
 		form AddTagForm
 	)
-
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
 		return
 	}
-
 	tagService := tag_service.Tag{
 		Name:      form.Name,
 		CreatedBy: form.CreatedBy,
@@ -95,15 +83,16 @@ func AddTag(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ERROR_EXIST_TAG, nil)
 		return
 	}
-
 	err = tagService.Add()
 	if err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_TAG_FAIL, nil)
 		return
 	}
-
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
+
+
+
 
 type EditTagForm struct {
 	ID         int    `form:"id" valid:"Required;Min(1)"`

@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
 	"github.com/guicai123/gin-v2/models"
 	"github.com/guicai123/gin-v2/pkg/gredis"
 	"github.com/guicai123/gin-v2/pkg/logging"

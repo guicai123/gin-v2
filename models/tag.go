@@ -1,16 +1,16 @@
 package models
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
 type Tag struct {
 	Model
-
 	Name       string `json:"name"`
-	CreatedBy  string `json:"created_by"`
-	ModifiedBy string `json:"modified_by"`
-	State      int    `json:"state"`
+	//CreatedBy  string `json:"created_by"`
+	//ModifiedBy string `json:"modified_by"`
+	//State      int    `json:"state"`
 }
 
 // ExistTagByName checks if there is a tag with the same name
@@ -32,43 +32,36 @@ func ExistTagByName(name string) (bool, error) {
 func AddTag(name string, state int, createdBy string) error {
 	tag := Tag{
 		Name:      name,
-		State:     state,
-		CreatedBy: createdBy,
+		//State:     state,
+		//CreatedBy: createdBy,
 	}
 	if err := db.Create(&tag).Error; err != nil {
 		return err
 	}
-
 	return nil
 }
 
-// GetTags gets a list of tags based on paging and constraints
+//获取全部信息
 func GetTags(pageNum int, pageSize int, maps interface{}) ([]Tag, error) {
 	var (
 		tags []Tag
 		err  error
 	)
-
-	if pageSize > 0 && pageNum > 0 {
-		err = db.Where(maps).Find(&tags).Offset(pageNum).Limit(pageSize).Error
-	} else {
-		err = db.Where(maps).Find(&tags).Error
-	}
-
+	fmt.Println(1)
+	err = db.Select("id,name").Where(maps).Offset(pageNum).Limit(pageSize).Find(&tags).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
-
 	return tags, nil
 }
 
-// GetTagTotal counts the total number of tags based on the constraint
+
+//统计平台数据
 func GetTagTotal(maps interface{}) (int, error) {
 	var count int
 	if err := db.Model(&Tag{}).Where(maps).Count(&count).Error; err != nil {
 		return 0, err
 	}
-
 	return count, nil
 }
 

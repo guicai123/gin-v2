@@ -2,7 +2,7 @@ module github.com/guicai123/gin-v2
 
 
 
-go 1.13
+go 1.16
 
 
 

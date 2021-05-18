@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -63,11 +64,11 @@ func GetArticle(id int) (*Article, error) {
 		return nil, err
 	}
 
-	err = db.Model(&article).Related(&article.Tag).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil, err
-	}
-
+	//err = db.Model(&article).Related(&article.Tag).Error
+	//if err != nil && err != gorm.ErrRecordNotFound {
+	//	return nil, err
+	//}
+    fmt.Println(&article)
 	return &article, nil
 }
 
