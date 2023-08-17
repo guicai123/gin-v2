@@ -2,6 +2,7 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/guicai123/gin-v2/pkg/util"
 	"github.com/guicai123/gin-v2/routers/api"
 	v1 "github.com/guicai123/gin-v2/routers/api/v1"
 
@@ -13,7 +14,7 @@ func InitRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
-
+	r.Use(util.LoggerToFile())
 	//r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 	//r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	//r.StaticFS("/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
@@ -24,29 +25,17 @@ func InitRouter() *gin.Engine {
 
 	apiv1 := r.Group("/api/v1")
 	{
-		apiv1.POST("/reg",v1.DoReg) //用户注册		
-		apiv1.POST("/login",v1.DoLogin) //用户登陆
-		apiv1.GET("/index",v1.Index) //app首页
+		apiv1.POST("/reg", v1.DoReg)     //用户注册
+		apiv1.POST("/login", v1.DoLogin) //用户登陆
+		apiv1.GET("/index", v1.Index)    //app首页
 
-
-
-		apiv1.POST("/tags", v1.AddTag)  //添加标题
+		apiv1.POST("/tags", v1.AddTag) //添加标题
 		apiv1.GET("/tags", v1.GetTags) //获取标签列表
-
-
-
 
 		apiv1.GET("/articles", v1.GetArticles)
 		apiv1.GET("/articles/:id", v1.GetArticle)
 
 	}
-
-
-
-
-
-
-
 
 	apiv1.Use(jwt.JWT())
 	{
@@ -58,7 +47,6 @@ func InitRouter() *gin.Engine {
 		//apiv1.PUT("/tags/:id", v1.EditTag)
 		////删除指定标签
 		//apiv1.DELETE("/tags/:id", v1.DeleteTag)
-
 
 		////导出标签
 		//r.POST("/tags/export", v1.ExportTag)

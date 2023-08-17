@@ -14,13 +14,14 @@ type Member struct {
 	Token    string
 	Created  string
 }
-//注册用户信息
+
+// 注册用户信息
 func (a *Member) RegMember() error {
 	memberInfo := map[string]interface{}{
-		"username":     a.Username,
-		"password":     a.Password,
-		"token":        a.Token,
-		"created":      a.Created,
+		"user_name": a.Username,
+		"password":  a.Password,
+		"token":     a.Token,
+		"created":   a.Created,
 	}
 	if err := models.AddMember(memberInfo); err != nil {
 		return err
@@ -28,7 +29,7 @@ func (a *Member) RegMember() error {
 	return nil
 }
 
-//获取单个用户信息
+// 获取单个用户信息
 func (a *Member) GetOne() ([]models.Member, error) {
 	var (
 		tags []models.Member
@@ -41,7 +42,7 @@ func (a *Member) GetOne() ([]models.Member, error) {
 	return tags, nil
 }
 
-//获取全部用户信息
+// 获取全部用户信息
 func (a *Member) GetAll() ([]models.Member, error) {
 	var (
 		tags []models.Member
@@ -64,7 +65,3 @@ func (a *Member) getMaps() map[string]interface{} {
 	maps["is_deleted"] = 1
 	return maps
 }
-
-
-
-

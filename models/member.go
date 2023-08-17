@@ -18,10 +18,10 @@ type Member struct {
 // 插入数据
 func AddMember(data map[string]interface{}) error {
 	member := Member{
-		UserName:   data["username"].(string),
-		Password:   data["password"].(string),
-		Token:      data["token"].(string),
-		Created:    data["created"].(string),
+		UserName: data["user_name"].(string),
+		Password: data["password"].(string),
+		Token:    data["token"].(string),
+		Created:  data["created"].(string),
 	}
 	fmt.Println(data)
 	if err := db.Create(&member).Error; err != nil {
@@ -30,11 +30,11 @@ func AddMember(data map[string]interface{}) error {
 	return nil
 }
 
-//获取单个用户信息
+// 获取单个用户信息
 func GetMemberOne(maps interface{}) ([]Member, error) {
 	var (
 		members []Member
-		err  error
+		err     error
 	)
 	err = db.Where(maps).Find(&members).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
@@ -43,11 +43,11 @@ func GetMemberOne(maps interface{}) ([]Member, error) {
 	return members, nil
 }
 
-//全部用户信息
+// 全部用户信息
 func GetMemberAll(pageNum int, pageSize int, maps interface{}) ([]Member, error) {
 	var (
 		MemberAll []Member
-		err  error
+		err       error
 	)
 	err = db.Select("id,name").Where(maps).Offset(pageNum).Limit(pageSize).Find(&MemberAll).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
@@ -55,7 +55,3 @@ func GetMemberAll(pageNum int, pageSize int, maps interface{}) ([]Member, error)
 	}
 	return MemberAll, nil
 }
-
-
-
-
