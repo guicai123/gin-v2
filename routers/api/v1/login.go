@@ -3,6 +3,7 @@ package v1
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/guicai123/gin-v2/models"
 	"github.com/guicai123/gin-v2/pkg/app"
 	"github.com/guicai123/gin-v2/pkg/e"
 	"github.com/guicai123/gin-v2/pkg/util"
@@ -10,6 +11,16 @@ import (
 	"net/http"
 	"time"
 )
+
+type Member struct {
+	ID       int
+	PageNum  int
+	PageSize int
+	Username string
+	Password string
+	Token    string
+	Created  string
+}
 
 // 用户注册信息
 func DoReg(c *gin.Context) {
@@ -25,14 +36,47 @@ func DoReg(c *gin.Context) {
 		return
 	}
 	now := time.Now()
-	articleService := member_service.Member{
+	memberInfo := member_service.Member{
 		Username: username,
-		Password: password,
+		Password: util.EncodeMD5(password),
 		Token:    token,
 		Created:  now.Format("2006-01-02 15:04:05"),
 	}
-	fmt.Sprintf("%T", articleService)
-	if err := articleService.RegMember(); err != nil {
+
+	//判断用户是否存在
+	maps := make(map[string]interface{})
+	maps["user_name"] = memberInfo.Username
+
+	var (
+		tags []models.Member
+	)
+
+	tags, err = models.GetMemberOne(maps)
+	if err != nil {
+
+	}
+
+	if len(tags) == 0 {
+		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_ARTICLE_FAIL, nil)
+		return
+	}
+
+	fmt.Println(maps)
+	fmt.Println(tags)
+
+	//memberInfo2 := map[string]interface{}{
+	//	"user_name": memberInfo.Username,
+	//	"password":  memberInfo.Password,
+	//	"token":     memberInfo.Token,
+	//	"created":   memberInfo.Created,
+	//}
+	//if err := models.AddMember(memberInfo2); err != nil {
+	//	appG.Response(http.StatusInternalServerError, e.ERROR_ADD_ARTICLE_FAIL, nil)
+	//	return
+	//}
+
+	fmt.Sprintf("%T", memberInfo)
+	if err := memberInfo.RegMember(); err != nil {
 		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_ARTICLE_FAIL, nil)
 		return
 	}
