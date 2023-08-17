@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"github.com/guicai123/gin-v2/pkg/util"
 	"log"
 
 	"github.com/jinzhu/gorm"
@@ -14,7 +15,7 @@ import (
 var db *gorm.DB
 
 type Model struct {
-	ID         int `gorm:"primary_key" json:"id"`
+	ID int `gorm:"primary_key" json:"id"`
 	//CreatedOn  int `json:"created_on"`
 	//ModifiedOn int `json:"modified_on"`
 	//DeletedOn  int `json:"deleted_on"`
@@ -38,6 +39,7 @@ func Setup() {
 	}
 
 	db.SingularTable(true)
+	db.SetLogger(util.Logger())
 	//db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
 	//db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
 	db.Callback().Delete().Replace("gorm:delete", deleteCallback)

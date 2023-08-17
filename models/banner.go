@@ -2,20 +2,19 @@ package models
 
 import "github.com/jinzhu/gorm"
 
-type Banner struct{
-	Id string `json:"id"`
+type Banner struct {
+	Id    string `json:"id"`
 	Title string `json:"title"`
 	Image string `json:"image"`
-
 }
 
-//获取单个用户信息
+// 获取单个用户信息
 func GetBannerOne(maps interface{}) ([]Banner, error) {
 	var (
 		banners []Banner
-		err  error
+		err     error
 	)
-	err = db.Where(maps).Limit(5).Order("id Desc").Find(&banners).Error
+	err = db.Where(maps).Select("id,title,image").Limit(5).Order("id Desc").Find(&banners).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
