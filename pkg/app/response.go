@@ -25,3 +25,13 @@ func (g *Gin) Response(httpCode, errCode int, data interface{}) {
 	})
 	return
 }
+
+// Response setting gin.JSON
+func (g *Gin) Nresponse(Code int, Msg string, data interface{}) {
+	g.C.JSON(200, Response{
+		Code: Code,
+		Msg:  Msg,
+		Data: data,
+	})
+	return
+}

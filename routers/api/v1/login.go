@@ -55,14 +55,13 @@ func DoReg(c *gin.Context) {
 	if err != nil {
 
 	}
-
-	if len(tags) == 0 {
-		appG.Response(http.StatusInternalServerError, e.ERROR_ADD_ARTICLE_FAIL, nil)
+	if len(tags) != 0 {
+		appG.Nresponse(4015, "用户信息已存在", nil)
 		return
 	}
 
-	fmt.Println(maps)
-	fmt.Println(tags)
+	//fmt.Println(maps)
+	//fmt.Println(tags)
 
 	//memberInfo2 := map[string]interface{}{
 	//	"user_name": memberInfo.Username,
@@ -92,7 +91,7 @@ func DoLogin(c *gin.Context) {
 	Password := c.PostForm("password")
 	articleService := member_service.Member{
 		Username: username,
-		Password: Password,
+		Password: util.EncodeMD5(Password),
 	}
 	member, err := articleService.GetOne()
 	if err != nil || len(member) == 0 {
